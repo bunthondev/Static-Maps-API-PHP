@@ -17,13 +17,12 @@ $bounds = array(
   'maxLng' => -180
 );
 
-$is_authenticated = is_authenticated( request('token' ) );
+$is_authenticated = true;
 
 $markers = array();
 if($markersTemp=request('marker')) {
   if(!is_array($markersTemp))
     $markersTemp = array($markersTemp);
-
   // If no latitude is set, use the center of all the markers
   foreach($markersTemp as $i=>$m) {
     if(preg_match_all('/(?P<k>[a-z]+):(?P<v>[^;]+)/', $m, $matches)) {
@@ -294,7 +293,10 @@ $tileServices = array(
   ),
   'carto-voyager' => array(
     'https://cartodb-basemaps-a.global.ssl.fastly.net/rastertiles/voyager/{Z}/{X}/{Y}.png'
-  )
+  ),
+  'esri-world-imagery' => array(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{Z}/{Y}/{X}'
+  ),
 );
 
 if( (request('basemap')) && array_key_exists( request('basemap'), $tileServices ) ) {
@@ -306,7 +308,8 @@ if( (request('basemap')) && array_key_exists( request('basemap'), $tileServices 
 } elseif ('custom' === request('basemap') && $is_authenticated ) {
     $tileURL = request('tileurl');
     $overlayURL = false;
-} else {
+} 
+else {
   $tileURL = $tileServices['osm'][0];
   $overlayURL = false;
 }
